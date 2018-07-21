@@ -1,0 +1,2 @@
+create migration and models
+php artisan make:model -m name_of_model
