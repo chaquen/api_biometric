@@ -235,9 +235,11 @@ class ReportesController extends Controller
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
+                                     $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key != "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
+                                     $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key != "proceso.nombre_proceso"){
                                     $sql.=" $key ='".$value."' AND";    
@@ -352,9 +354,11 @@ class ReportesController extends Controller
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key != "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key!="proceso.nombre_proceso"){
                                     $sql.=" $key ='".$value."' AND";    
