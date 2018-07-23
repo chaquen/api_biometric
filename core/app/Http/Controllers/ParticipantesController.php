@@ -171,7 +171,7 @@ class ParticipantesController extends Controller
         $detalle_participantes=$request->get("detalle_participantes");
         $procesos=$request->get("procesos");
         // echo "server => :(";
-        //var_dump($datos);
+        //var_dump( $participantes);
         if($participantes!=false){
                foreach ($participantes as $key => $value) {
 
@@ -182,7 +182,7 @@ class ParticipantesController extends Controller
               //var_dump($value["seg_apellido"]);
               //var_dump($value["seg_nombre"]);
               //var_dump($value["ciud_nacimiento"]);
-              //var_dump($value["dep_nacimiento"]);
+              //var_dump($value["tipo_registro"]);
               //var_dump($value["documento"]);
               //echo "=====</br>";
                  
@@ -209,13 +209,12 @@ class ParticipantesController extends Controller
                                   "cap_dife"=>$value["cap_dife"],
                                   "etnia"=>$value["etnia"],
                                   "zona"=>$value["zona"],
+                                  "departamento_ubi"=>$value["departamento_ubi"],
                                   "municipio"=>$value["municipio"],
                                   "celular"=>$value["celular"],
                                   "email"=>$value["email"],
                                   "escolaridad"=>$value["escolaridad"],
                                   "titulo_obt"=>$value["titulo_obt"],
-                                  "proceso"=>$value["proceso"],
-                                  "organizacion"=>$value["organizacion"],
                                   "huella_binaria"=>$value["huella_binaria"],
                                   "state"=>$value["state"],
                                   "estado_registro"=>$value["estado_registro"],
@@ -247,13 +246,12 @@ class ParticipantesController extends Controller
                                   "cap_dife"=>$value["cap_dife"],
                                   "etnia"=>$value["etnia"],
                                   "zona"=>$value["zona"],
+                                  "departamento_ubi"=>$value["departamento_ubi"],
                                   "municipio"=>$value["municipio"],
                                   "celular"=>$value["celular"],
                                   "email"=>$value["email"],
                                   "escolaridad"=>$value["escolaridad"],
                                   "titulo_obt"=>$value["titulo_obt"],
-                                  "proceso"=>$value["proceso"],
-                                  "organizacion"=>$value["organizacion"],
                                   "huella_binaria"=>$value["huella_binaria"],
                                   "state"=>$value["state"],
                                   "estado_registro"=>$value["estado_registro"],

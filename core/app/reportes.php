@@ -190,9 +190,11 @@ class reportes extends Model
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
-                                if($key != "proceso.nombre_proceso" && $value!=""){
+                                if($key == "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key != "proceso.nombre_proceso"){
                                     $sql.=" $key ='".$value."' AND";    
@@ -307,9 +309,11 @@ class reportes extends Model
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
-                                if($key != "proceso.nombre_proceso" && $value!=""){
+                                if($key == "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
+                                    $sql.=" $key ='".$value."' AND";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key != "proceso.nombre_proceso"){
                                     $sql.=" $key ='".$value."' AND";    

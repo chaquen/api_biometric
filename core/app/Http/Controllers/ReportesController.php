@@ -237,7 +237,7 @@ class ReportesController extends Controller
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
                                      $sql.=" $key ='".$value."' AND";  
                                 }
-                                if($key != "proceso.nombre_proceso" && $value!=""){
+                                if($key == "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
                                      $sql.=" $key ='".$value."' AND";  
                                 }
@@ -356,7 +356,7 @@ class ReportesController extends Controller
                                     $sql_org.=" AND lineas.nombre_linea = '".$value."'";
                                     $sql.=" $key ='".$value."' AND";  
                                 }
-                                if($key != "proceso.nombre_proceso" && $value!=""){
+                                if($key == "proceso.nombre_proceso" && $value!=""){
                                     $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
                                     $sql.=" $key ='".$value."' AND";  
                                 }
@@ -392,7 +392,7 @@ class ReportesController extends Controller
             case 'G':
                     if($sql!="" && $sql!=" " ){
                         $dagen=DB::select(trim($sql_base_genero.$sql_base_id.$sql.") GROUP BY genero")); 
-                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql.") GROUP BY sub_genero"));                       
+                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql." )  GROUP BY sub_genero"));                       
                         $daedad=DB::select(trim($sql_base_edad.$sql_base_id.$sql.") GROUP BY edad")); 
                         $dadepnac=DB::select(trim($sql_base_dep_nacimiento.$sql_base_id.$sql.") GROUP BY dep_nacimiento"));  
                         $daciunac=DB::select(trim($sql_base_ciud_nacimiento.$sql_base_id.$sql.") GROUP BY ciud_nacimiento")); 
