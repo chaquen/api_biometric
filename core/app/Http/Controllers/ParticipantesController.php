@@ -111,7 +111,7 @@ class ParticipantesController extends Controller
             
             
         }
-        var_dump($datos->datos);
+        //var_dump($datos->datos);
         if(count($arr)>0){
             DB::table("participante")->where("id",$datos->datos->id)->update($arr);
         }

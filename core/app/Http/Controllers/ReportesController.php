@@ -64,7 +64,7 @@ class ReportesController extends Controller
         $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
 
         $sql_base=trim("
-                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife FROM participantes 
+                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -99,6 +99,8 @@ class ReportesController extends Controller
 
         $sql_base_escolaridad=trim("
                     SELECT COUNT(escolaridad) AS cuantos_por_escolaridad,participantes.escolaridad FROM participantes WHERE participantes.id IN (");
+        $sql_base_ingreso_pdp=trim("
+                    SELECT COUNT(anio_ingreso_pdp) AS cuantos_por_anio,participantes.anio_ingreso_pdp FROM participantes WHERE participantes.id IN (");
         $sql_base_linea_organizacion=trim("
                     SELECT COUNT(lineas.id) AS cuantos_por_organizacion,lineas.nombre_linea as organizacion FROM participantes 
                     INNER JOIN detalle_procesos ON participantes.documento = detalle_procesos.id_usuario 
@@ -113,7 +115,7 @@ class ReportesController extends Controller
                     WHERE participantes.id IN (");
                     
         $sql_base_doc=trim("
-                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia FROM participantes 
+                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -121,7 +123,7 @@ class ReportesController extends Controller
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
          $sql_base_nom=trim("
-                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia FROM participantes 
+                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -221,7 +223,9 @@ class ReportesController extends Controller
                     $sql_pro=" ";
                     foreach ($datos->datos->datos as $key => $value) {
                             if(gettype($value)!="array" && $value != "" && $key!="tipo_reporte"){
-
+                                if($key=="dep_nacimiento"){
+                                    $value=explode("-", $value)[1];
+                                }
                                 if($key=="documento"){
                                     $sql.=" documento = '".$value."' AND";
                                     $sqlnom.=" documento = '".$value."'";
@@ -234,12 +238,12 @@ class ReportesController extends Controller
                                    $sqldoc.=" pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."'";
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
-                                    $sql_org.=" AND lineas.nombre_linea = '".$value."'";
-                                     $sql.=" $key ='".$value."' AND";  
+                                    $sql_org.=" AND lineas.id = '".explode("-", $value)[0]."'";
+                                     $sql.=" lineas.id = '".explode("-", $value)[0]."' AND";  
                                 }
                                 if($key == "proceso.nombre_proceso" && $value!=""){
-                                    $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
-                                     $sql.=" $key ='".$value."' AND";  
+                                    $sql_pro.=" AND proceso.id = '".explode("-", $value)[0]."'";
+                                     $sql.=" proceso.id = '".explode("-", $value)[0]."' AND";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key != "proceso.nombre_proceso"){
                                     $sql.=" $key ='".$value."' AND";    
@@ -251,7 +255,24 @@ class ReportesController extends Controller
              default:
                 
                     $sql=" ";
-                    $sql.= " eventos.id = '".$datos->datos->id_evento."' AND (";
+                   
+                    if(gettype($datos->datos->id_evento)=="array"){
+                        $sql.=" eventos.id IN ( ";
+                        $fin =count($datos->datos->id_evento)-1; 
+                        foreach ($datos->datos->id_evento as $key => $value) {
+                            if($key==$fin){
+                                $sql.=" '".$value."') ";
+                                break;
+                            }else{
+                                $sql.=" '".$value."', ";
+                            }
+                           
+                        }
+                        $sql.= " AND ( ";
+                    }else{
+                        $sql.= " eventos.id = '".$datos->datos->id_evento."' AND ( ";    
+                    }
+
                     foreach ($datos->datos->datos as $key => $value) {
                             if(gettype($value)=="array"){
                                 switch ($key) {
@@ -339,29 +360,32 @@ class ReportesController extends Controller
                     $sql_pro=" ";
                     foreach ($datos->datos->datos as $key => $value) {
                             if(gettype($value)!="array" && $value != "" && $key!="tipo_reporte" ){
+                                if($key=="dep_nacimiento"){
+                                    $value=explode("-", $value)[1];
+                                }
                                 //echo $key."<br>";
                                 if($key=="documento"){
-                                    $sql.=" documento = '".$value."' AND";
-                                    $sqldoc.=" documento = '".$value."' AND eventos.id = '".$datos->datos->id_evento."'";
+                                    $sql.=" documento = '".$value."' AND ";
+                                    $sqldoc.=" documento = '".$value."' AND eventos.id = '".$datos->datos->id_evento."' ";
                                     
                                 }
                                 if($key=="pri_nombre"){
-                                    $sql.=" pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."' AND" ;
+                                    $sql.=" pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."' AND " ;
                                     
-                                    $sqlnom.="(pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."'".") AND eventos.id = '".$datos->datos->id_evento."'";
+                                    $sqlnom.="(pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."'".") AND eventos.id = '".$datos->datos->id_evento."' ";
                                 //echo $sql_base_nom.$sql_2 ;   
                                     
                                 }
                                 if($key=="lineas.nombre_linea" && $value!=""){
-                                    $sql_org.=" AND lineas.nombre_linea = '".$value."'";
-                                    $sql.=" $key ='".$value."' AND";  
+                                    $sql_org.=" AND lineas.id = '".explode("-", $value)[0]."'";
+                                     $sql.=" lineas.id = '".explode("-", $value)[0]."' AND ";  
                                 }
                                 if($key == "proceso.nombre_proceso" && $value!=""){
-                                    $sql_pro.=" AND proceso.nombre_proceso = '".$value."'";
-                                    $sql.=" $key ='".$value."' AND";  
+                                    $sql_pro.=" AND proceso.id = '".explode("-", $value)[0]."'";
+                                     $sql.=" proceso.id = '".explode("-", $value)[0]."' AND ";  
                                 }
                                 if($key!="documento" && $key != "id_evento" && $key != "pri_nombre" && $key != "lineas.nombre_linea" && $key!="proceso.nombre_proceso"){
-                                    $sql.=" $key ='".$value."' AND";    
+                                    $sql.=" $key ='".$value."' AND ";    
                                 }
                             }
                     }
@@ -400,8 +424,40 @@ class ReportesController extends Controller
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.") GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.") GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.") GROUP BY escolaridad"));
-                        $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")".$sql_org." GROUP BY lineas.id"));
-                        $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")".$sql_pro." GROUP BY proceso.id")); 
+                        $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.") GROUP BY anio_ingreso_pdp"));
+                        if($sql_org!=" "){
+
+                            $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql." )".$sql_org." GROUP BY lineas.id"));    
+                        }else{
+                            $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql." ) GROUP BY lineas.id"));
+                        }
+                        
+                        if($sql_org==" " && $sql_pro == " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ) GROUP BY proceso.id"));
+                        }
+                        if($sql_org!=" " && $sql_pro == " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." )  ".$sql_org." GROUP BY lineas.id"));
+                        }
+                        //var_dump($sql_pro);
+                        //var_dump($sql_org);
+
+                        if($sql_org==" " && $sql_pro != " "){
+                            //ECHO trim($sql_base_proceso.$sql_base_id.$sql." )  ".$sql_pro." GROUP BY proceso.id");
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." )  ".$sql_pro." GROUP BY lineas.id"));
+                        }
+
+                        if($sql_org!=" " && $sql_pro != " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." )  ".$sql_org." GROUP BY proceso.id"));
+                        }
+
+
+
+                            
+
+
+
+                        
+                         
                         $datbleventos=DB::select(trim($sql_base_tbl_eventos_G." GROUP BY eventos.id ORDER BY cuantos_por_eventos DESC"));
                     }
                     if($sqldoc!="" && $sqldoc!=" "){
@@ -428,9 +484,68 @@ class ReportesController extends Controller
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.")) GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.")) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.")) GROUP BY escolaridad"));
-                        $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")) ".$sql_org." GROUP BY lineas.id"));
-                        $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")) ".$sql_pro." GROUP BY proceso.id")); 
-                        $datbleventos=DB::select(trim($sql_base_tbl_eventos." eventos.id = '".$datos->datos->id_evento."' GROUP BY eventos.id"));
+                        $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.")) GROUP BY anio_ingreso_pdp"));
+                         
+                        //$daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")) ".$sql_org." GROUP BY lineas.id"));
+                        //$daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")) ".$sql_pro." GROUP BY proceso.id")); 
+
+
+
+                        if($sql_org!=" "){
+
+                            $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql." ".$sql_org." ))".$sql_org." GROUP BY lineas.id"));    
+                        }else{
+                            $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql." )) GROUP BY lineas.id"));
+                        }
+                        
+                        if($sql_org==" " && $sql_pro == " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." )) GROUP BY proceso.id"));
+                        }
+                        if($sql_org!=" " && $sql_pro == " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." ))  ".$sql_org." GROUP BY lineas.id"));
+                        }
+                        //var_dump($sql_pro);
+                        //var_dump($sql_org);
+
+                        if($sql_org==" " && $sql_pro != " "){
+                            //echo trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY lineas.id");
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY lineas.id"));
+                        }
+
+                        if($sql_org!=" " && $sql_pro != " "){
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_org." GROUP BY proceso.id"));
+                        }
+
+
+
+
+
+
+                       
+
+
+                        if(gettype($datos->datos->id_evento)=="array"){
+                            
+                            $sql_eve=" eventos.id IN ( ";
+                            $fin =count($datos->datos->id_evento)-1; 
+                            foreach ($datos->datos->id_evento as $key => $value) {
+                                if($key==$fin){
+                                    $sql_eve.= " '".$value."') ";
+                                    break;
+                                }else{
+                                    $sql_eve.=" '".$value."', ";
+                                }
+                            }
+                           
+
+                           
+
+                             $datbleventos=DB::select(trim($sql_base_tbl_eventos.$sql_eve." GROUP BY eventos.id"));
+                        }else{
+                             $datbleventos=DB::select(trim($sql_base_tbl_eventos." eventos.id = '".$datos->datos->id_evento."' GROUP BY eventos.id"));
+                        }
+
+
                     }
                     if($sqldoc!="" && $sqldoc!=" "){
                         $dadoc=DB::select(trim($sql_base_doc.$sqldoc." GROUP BY documento,eventos.id"));  
@@ -448,12 +563,12 @@ class ReportesController extends Controller
         }
         
         if(count($res)>0){
-               return response()->json(array("mensaje"=>"REPORTE ".$datos->datos->id_evento,"datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,
-                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"sql"=>trim($sql_base.$sql." GROUP BY id"),"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"respuesta"=>true)); 
+               return response()->json(array("mensaje"=>"REPORTE ","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,
+                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"respuesta"=>true,"sql"=>trim($sql_base_tbl_eventos.$sql_eve." GROUP BY eventos.id")
+                )); 
 
         }else{
-            return response()->json(array("mensaje"=>"REPORTE ".$datos->datos->id_evento." sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"sql"=>$sql_base_sub_etnia.$sql_base_id.$sql.")) GROUP BY sub_etnia","documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,
-                    "respuesta"=>false)); 
+            return response()->json(array("mensaje"=>"REPORTE ".$datos->datos->id_evento." sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"respuesta"=>false,"sql"=>trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY proceso.id"))); 
         }
             
             
@@ -500,7 +615,7 @@ class ReportesController extends Controller
                 ->join("detalle_procesos","detalle_procesos.id_usuario","=","participantes.documento")
                 ->join("proceso","proceso.id","=","detalle_procesos.id_proceso")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
-                ->select("proceso.nombre_proceso as proceso",DB::RAW("COUNT(proceso.id) as cuantos_por_proceso"))
+                ->select(DB::RAW("CONCAT(proceso.id,'-',proceso.nombre_proceso) as proceso"),DB::RAW("COUNT(proceso.id) as cuantos_por_proceso"))
                 ->groupBy("proceso.id")
                 ->get();  
             $organizacion=DB::table("participantes")
@@ -509,7 +624,7 @@ class ReportesController extends Controller
                 ->join("proceso","proceso.id","=","detalle_procesos.id_proceso")
                 ->join("lineas","lineas.id","=","proceso.fk_id_linea")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
-                ->select("lineas.nombre_linea as organizacion",DB::RAW("COUNT(lineas.id) as cuantos_por_organizacion"))
+                ->select(DB::RAW("CONCAT(lineas.id,'-',lineas.nombre_linea) as organizacion"),DB::RAW("COUNT(lineas.id) as cuantos_por_organizacion"))
                 ->groupBy("lineas.id")
                 ->get();      
             $eventos=DB::table("eventos")->get();          
@@ -555,7 +670,7 @@ class ReportesController extends Controller
                 ->join("proceso","proceso.id","=","detalle_procesos.id_proceso")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
                 ->where("eventos.id",$id)
-                ->select("proceso.nombre_proceso as proceso",DB::RAW("COUNT(proceso) as cuantos_por_proceso"))
+                ->select(DB::RAW("CONCAT(proceso.id,'-',proceso.nombre_proceso) as proceso"),DB::RAW("COUNT(proceso.id) as cuantos_por_proceso"))
                 ->groupBy("proceso.id")
                 ->get();    
             $organizacion=DB::table("participantes")
@@ -565,7 +680,7 @@ class ReportesController extends Controller
                 ->join("lineas","lineas.id","=","proceso.fk_id_linea")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
                 ->where("eventos.id",$id)
-                ->select("lineas.nombre_linea as organizacion",DB::RAW("COUNT(lineas.id) as cuantos_por_organizacion"))
+                ->select(DB::RAW("CONCAT(lineas.id,'-',lineas.nombre_linea) as organizacion"),DB::RAW("COUNT(lineas.id) as cuantos_por_organizacion"))
                 ->groupBy("lineas.id")
                 ->get();   
             $eventos=DB::table("eventos")->where("id",$id)->get();    

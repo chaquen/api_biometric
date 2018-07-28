@@ -14,11 +14,11 @@ class reportes extends Model
 
 
 
-          $sql_base_tbl_eventos_G=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id ");
+         $sql_base_tbl_eventos_G=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id ");
         $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
 
         $sql_base=trim("
-                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife FROM participantes 
+                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -36,6 +36,8 @@ class reportes extends Model
                      WHERE ");
         $sql_base_genero=trim("
                     SELECT COUNT(genero) AS cuentos_por_genero,participantes.genero FROM participantes WHERE participantes.id IN (");
+        $sql_base_sub_genero=trim("
+                    SELECT COUNT(sub_genero) AS cuentos_por_sub_genero,participantes.sub_genero FROM participantes WHERE participantes.id IN (");
         $sql_base_edad=trim("
                     SELECT COUNT(edad) AS cuentos_por_edad,participantes.edad FROM participantes WHERE participantes.id IN (");
         $sql_base_dep_nacimiento=trim("
@@ -63,8 +65,9 @@ class reportes extends Model
                     INNER join proceso ON proceso.id = detalle_procesos.id_proceso
                     INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                     WHERE participantes.id IN (");
+                    
         $sql_base_doc=trim("
-                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia FROM participantes 
+                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -72,13 +75,14 @@ class reportes extends Model
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
          $sql_base_nom=trim("
-                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia FROM participantes 
+                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
                         INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
+         $dadoc=array();
          $dadoc=array();
          $danom=array();
          $sqlnom=" ";
@@ -206,7 +210,23 @@ class reportes extends Model
              default:
                 
                     $sql=" ";
-                    $sql.= " eventos.id = '".$datos->datos->id_evento."' AND (";
+                    if(gettype($datos->datos->id_evento)=="array"){
+                        $sql.=" eventos.id IN ( ";
+                        $fin =count($datos->datos->id_evento)-1; 
+                        foreach ($datos->datos->id_evento as $key => $value) {
+                            if($key==$fin){
+                                $sql.=" '".$value."') ";
+                                break;
+                            }else{
+                                $sql.=" '".$value."', ";
+                            }
+                           
+                        }
+                        $sql.= " AND ( ";
+                    }else{
+                        $sql.= " eventos.id = '".$datos->datos->id_evento."' AND (";    
+                    }
+                    
                     foreach ($datos->datos->datos as $key => $value) {
                             if(gettype($value)=="array"){
                                 switch ($key) {
@@ -384,7 +404,30 @@ class reportes extends Model
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.")) GROUP BY escolaridad"));
                         $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")) ".$sql_org." GROUP BY lineas.id"));
                         $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")) ".$sql_pro." GROUP BY proceso.id")); 
-                        $datbleventos=DB::select(trim($sql_base_tbl_eventos." eventos.id = '".$datos->datos->id_evento."' GROUP BY eventos.id"));
+                        
+
+                        if(gettype($datos->datos->id_evento)=="array"){
+                            
+                            $sql_eve=" eventos.id IN ( ";
+                            $fin =count($datos->datos->id_evento)-1; 
+                            foreach ($datos->datos->id_evento as $key => $value) {
+                                if($key==$fin){
+                                    $sql_eve.= " '".$value."') ";
+                                    break;
+                                }else{
+                                    $sql_eve.=" '".$value."', ";
+                                }
+                            }
+                           
+
+                           
+
+                             $datbleventos=DB::select(trim($sql_base_tbl_eventos.$sql_eve." GROUP BY eventos.id"));
+                        }else{
+                             $datbleventos=DB::select(trim($sql_base_tbl_eventos." eventos.id = '".$datos->datos->id_evento."' GROUP BY eventos.id"));
+                        }
+
+
                     }
                     if($sqldoc!="" && $sqldoc!=" "){
                         $dadoc=DB::select(trim($sql_base_doc.$sqldoc." GROUP BY documento,eventos.id"));  
@@ -421,7 +464,7 @@ class reportes extends Model
 
         }else{
             return array("mensaje"=>"REPORTE ".$datos->datos->id_evento." sin datos que mostrar",
-                    "respuesta"=>false); 
+                    "respuesta"=>false,"sql"=>trim($sql_base.$sql.") GROUP BY id")); 
         }
     	
     	
