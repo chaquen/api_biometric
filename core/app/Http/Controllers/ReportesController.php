@@ -58,7 +58,7 @@ class ReportesController extends Controller
    
 
      public function reporte_general(Request $request){
-
+        $ssql="";
         $datos=json_decode($request->get("datos")); 
         $sql_base_tbl_eventos_G=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id ");
         $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
@@ -99,8 +99,12 @@ class ReportesController extends Controller
 
         $sql_base_escolaridad=trim("
                     SELECT COUNT(escolaridad) AS cuantos_por_escolaridad,participantes.escolaridad FROM participantes WHERE participantes.id IN (");
+        $sql_base_cargo=trim("
+                    SELECT COUNT(cargo_poblador) AS cuantos_por_cargo,participantes.cargo_poblador FROM participantes WHERE participantes.id IN (");
         $sql_base_ingreso_pdp=trim("
                     SELECT COUNT(anio_ingreso_pdp) AS cuantos_por_anio,participantes.anio_ingreso_pdp FROM participantes WHERE participantes.id IN (");
+         $sql_base_zona=trim("
+                    SELECT COUNT(zona) AS cuantos_por_zona,participantes.zona FROM participantes WHERE participantes.id IN (");
         $sql_base_linea_organizacion=trim("
                     SELECT COUNT(lineas.id) AS cuantos_por_organizacion,lineas.nombre_linea as organizacion FROM participantes 
                     INNER JOIN detalle_procesos ON participantes.documento = detalle_procesos.id_usuario 
@@ -160,7 +164,7 @@ class ReportesController extends Controller
                                          $sql.="(";
                                             foreach ($value as $k => $v) {
                                                 if($k==count($value)-1){
-                                                    $sql.=" edad  >= '".explode("a", $v)[0]."' AND edad <= '".explode("a", $v)[1]."')AND ";
+                                                    $sql.=" edad  >= '".explode("a", $v)[0]."' AND edad <= '".explode("a", $v)[1]."') AND ";
                                                     break;
                                                 }
                                                 $sql.=" edad >= '".explode("a", $v)[0]."' AND  edad <= '".explode("a", $v)[1]."' OR ";
@@ -416,15 +420,20 @@ class ReportesController extends Controller
             case 'G':
                     if($sql!="" && $sql!=" " ){
                         $dagen=DB::select(trim($sql_base_genero.$sql_base_id.$sql.") GROUP BY genero")); 
-                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql." )  GROUP BY sub_genero"));                       
+                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql." AND sub_genero <> 'NULL' )  GROUP BY sub_genero"));                       
                         $daedad=DB::select(trim($sql_base_edad.$sql_base_id.$sql.") GROUP BY edad")); 
                         $dadepnac=DB::select(trim($sql_base_dep_nacimiento.$sql_base_id.$sql.") GROUP BY dep_nacimiento"));  
                         $daciunac=DB::select(trim($sql_base_ciud_nacimiento.$sql_base_id.$sql.") GROUP BY ciud_nacimiento")); 
                         $dacapdif=DB::select(trim($sql_base_cap_dife.$sql_base_id.$sql.") GROUP BY cap_dife"));   
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.") GROUP BY etnia"));
-                        $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.") GROUP BY sub_etnia"));
+                        $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql." AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.") GROUP BY escolaridad"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.") GROUP BY anio_ingreso_pdp"));
+
+                        $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.") GROUP BY cargo_poblador"));
+                        $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.") GROUP BY zona"));
+                        
+
                         if($sql_org!=" "){
 
                             $daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql." )".$sql_org." GROUP BY lineas.id"));    
@@ -436,7 +445,7 @@ class ReportesController extends Controller
                             $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ) GROUP BY proceso.id"));
                         }
                         if($sql_org!=" " && $sql_pro == " "){
-                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." )  ".$sql_org." GROUP BY lineas.id"));
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." )  ".$sql_org." GROUP BY proceso.id"));
                         }
                         //var_dump($sql_pro);
                         //var_dump($sql_org);
@@ -468,6 +477,8 @@ class ReportesController extends Controller
                         
                         $danom=DB::select(trim($sql_base_nom.$sqlnom."  GROUP BY eventos.id,participantes.id ORDER BY eventos.id"));    
                     }
+
+
                     
                     
                        
@@ -476,16 +487,17 @@ class ReportesController extends Controller
             default:
                 if($sql!="" && $sql!=" " ){
                         $dagen=DB::select(trim($sql_base_genero.$sql_base_id.$sql.")) GROUP BY genero")); 
-                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql.")) GROUP BY sub_genero"));                      
+                        $dasubgen=DB::select(trim($sql_base_sub_genero.$sql_base_id.$sql.") AND sub_genero <> 'NULL' ) GROUP BY sub_genero"));                      
                         $daedad=DB::select(trim($sql_base_edad.$sql_base_id.$sql.")) GROUP BY edad")); 
                         $dadepnac=DB::select(trim($sql_base_dep_nacimiento.$sql_base_id.$sql.")) GROUP BY dep_nacimiento"));  
                         $daciunac=DB::select(trim($sql_base_ciud_nacimiento.$sql_base_id.$sql.")) GROUP BY ciud_nacimiento")); 
                         $dacapdif=DB::select(trim($sql_base_cap_dife.$sql_base_id.$sql.")) GROUP BY cap_dife"));   
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.")) GROUP BY etnia"));
-                        $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.")) GROUP BY sub_etnia"));
+                        $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.") AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.")) GROUP BY escolaridad"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.")) GROUP BY anio_ingreso_pdp"));
-                         
+                        $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.")) GROUP BY cargo_poblador")); 
+                        $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona"));
                         //$daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")) ".$sql_org." GROUP BY lineas.id"));
                         //$daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")) ".$sql_pro." GROUP BY proceso.id")); 
 
@@ -502,14 +514,14 @@ class ReportesController extends Controller
                             $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." )) GROUP BY proceso.id"));
                         }
                         if($sql_org!=" " && $sql_pro == " "){
-                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." ))  ".$sql_org." GROUP BY lineas.id"));
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ".$sql_org." ))  ".$sql_org." GROUP BY proceso.id"));
                         }
                         //var_dump($sql_pro);
                         //var_dump($sql_org);
 
                         if($sql_org==" " && $sql_pro != " "){
-                            //echo trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY lineas.id");
-                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY lineas.id"));
+                            //$ssql= trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY proceso.id");
+                            $daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY proceso.id"));
                         }
 
                         if($sql_org!=" " && $sql_pro != " "){
@@ -564,11 +576,12 @@ class ReportesController extends Controller
         
         if(count($res)>0){
                return response()->json(array("mensaje"=>"REPORTE ","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,
-                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"respuesta"=>true,"sql"=>trim($sql_base_tbl_eventos.$sql_eve." GROUP BY eventos.id")
+                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>true,"sql"=>$ssql
                 )); 
 
         }else{
-            return response()->json(array("mensaje"=>"REPORTE ".$datos->datos->id_evento." sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"respuesta"=>false,"sql"=>trim($sql_base_proceso.$sql_base_id.$sql." ))  ".$sql_pro." GROUP BY proceso.id"))); 
+            return response()->json(array("mensaje"=>"REPORTE  sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>false,"sql"=>trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona")
+                )); 
         }
             
             

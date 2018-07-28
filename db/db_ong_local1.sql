@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 28, 2018 at 05:43 PM
+-- Generation Time: Jul 24, 2018 at 04:05 AM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -133,7 +133,7 @@ CREATE TABLE `participantes` (
   `cargo_poblador` varchar(256) DEFAULT NULL,
   `huella_binaria` blob,
   `state` tinyint(1) DEFAULT NULL,
-  `estado_registro` enum('verificado','registrado','participando','antiguo') DEFAULT NULL,
+  `estado_registro` varchar(20) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `tipo_registro` varchar(20) DEFAULT NULL
