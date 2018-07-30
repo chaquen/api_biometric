@@ -34,13 +34,50 @@ class ExportarController extends Controller
         $arr_repo9=[];
         $arr_repo10=[];
         $arr_repo11=[];
-         $arr_repo12=[];
+        $arr_repo12=[];
+        $arr_repo_eve=[];
+        $arr_zona=[];
+        $arr_cargo=[];
+        $arr_anio_ing=[];
         $i=0;
         if($r["respuesta"]!=false){
                 foreach ($r["datos"] as $key => $value) {
                
                     $arr_repo[$i]=(array)$value;
                                     $i++;
+            
+                                
+                }
+                //var_dump($r["eventos"]);                
+                $i=0;
+                foreach ($r["eventos"] as $key => $value) {
+               
+                    $arr_repo_eve[$i]=(array)$value;
+                                $i++;
+            
+                                
+                }
+                $i=0;
+                foreach ($r["zonas"] as $key => $value) {
+               
+                    $arr_zona[$i]=(array)$value;
+                                $i++;
+            
+                                
+                }
+                $i=0;
+                foreach ($r["anio_ingreso_pdp"] as $key => $value) {
+               
+                    $arr_anio_ing[$i]=(array)$value;
+                                $i++;
+            
+                                
+                }
+                $i=0;
+                foreach ($r["cargo_poblador"] as $key => $value) {
+               
+                    $arr_cargo[$i]=(array)$value;
+                                $i++;
             
                                 
                 }
@@ -145,12 +182,18 @@ class ExportarController extends Controller
                                 
                 }
                 
-                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos){
-                                 // use($datos->datos->nombre_reporte)   
-                                $excel->sheet('asistentes',function($sheet) use($arr_repo){
+                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos,$arr_repo_eve,$arr_zona,$arr_anio_ing,$arr_cargo){
+                                
+                                $excel->sheet('Eventos',function($sheet) use($arr_repo_eve){
+                                    $sheet->fromArray($arr_repo_eve);
+                                });
+
+                                $excel->sheet('Asistentes',function($sheet) use($arr_repo){
                                     $sheet->fromArray($arr_repo);
                                 });
-                               
+                                $excel->sheet('Año ingreso PDP',function($sheet) use($arr_anio_ing){
+                                     $sheet->fromArray($arr_anio_ing);
+                                });  
                                 $excel->sheet('Genero',function($sheet) use($arr_repo1){
                                      $sheet->fromArray($arr_repo1);
                                 });  
@@ -178,8 +221,14 @@ class ExportarController extends Controller
                                 $excel->sheet('Organizacion',function($sheet) use($arr_repo9){
                                      $sheet->fromArray($arr_repo9);
                                 });  
-                                 $excel->sheet('Proceso',function($sheet) use($arr_repo10){
+                                $excel->sheet('Proceso',function($sheet) use($arr_repo10){
                                      $sheet->fromArray($arr_repo10);
+                                });
+                                $excel->sheet('Zonas',function($sheet) use($arr_zona){
+                                     $sheet->fromArray($arr_zona);
+                                });
+                                $excel->sheet('Cargo Poblador',function($sheet) use($arr_cargo){
+                                     $sheet->fromArray($arr_cargo);
                                 });  
                                 $excel->sheet('Documento',function($sheet) use($arr_repo11){
                                      $sheet->fromArray($arr_repo11);

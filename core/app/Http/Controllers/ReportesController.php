@@ -138,8 +138,8 @@ class ReportesController extends Controller
          $danom=array();
          $sqlnom=" ";
          $sqldoc=" ";
-         //COUNSTRUIR SENTENCIA
-         switch ($datos->datos->id_evento) {
+        //COUNSTRUIR SENTENCIA
+        switch ($datos->datos->id_evento) {
              case 'G':
                     $sql=" ";
                     foreach ($datos->datos->datos as $key => $value) {
@@ -397,7 +397,7 @@ class ReportesController extends Controller
                     //echo ":=(";
                     //echo $sql;
                  break;
-         }
+        }
       
         //echo $sql_base_genero.$sql_base.$sql.") GROUP BY genero";
         //var_dump($sqldoc);                
