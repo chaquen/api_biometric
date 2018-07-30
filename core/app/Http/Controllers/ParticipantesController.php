@@ -206,8 +206,10 @@ class ParticipantesController extends Controller
                                   "fecha_nac"=>$value["fecha_nac"],
                                   "edad"=>$value["edad"],
                                   "genero"=>$value["genero"],
+                                  "sub_genero"=>$value["sub_genero"],
                                   "cap_dife"=>$value["cap_dife"],
                                   "etnia"=>$value["etnia"],
+                                  "sub_etnia"=>$value["sub_etnia"],
                                   "zona"=>$value["zona"],
                                   "departamento_ubi"=>$value["departamento_ubi"],
                                   "municipio"=>$value["municipio"],
@@ -218,6 +220,8 @@ class ParticipantesController extends Controller
                                   "huella_binaria"=>$value["huella_binaria"],
                                   "state"=>$value["state"],
                                   "estado_registro"=>$value["estado_registro"],
+                                  "anio_ingreso_pdp"=>$value["anio_ingreso_pdp"],
+                                  "cargo_poblador"=>$value["cargo_poblador"],
                                   "created_at"=>$value["created_at"],
                                   "updated_at"=>$value["updated_at"]                             
 
@@ -233,6 +237,7 @@ class ParticipantesController extends Controller
                         ->where("documento",$value["documento"])
                            ->update([
                                   "tipo_doc"=>$value["tipo_doc"],
+                                  "documento"=>$value["documento"],
                                   "lugar_exp"=>$value["lugar_exp"],
                                   "pri_apellido"=>$value["pri_apellido"],
                                   "pri_nombre"=>$value["pri_nombre"],
@@ -243,8 +248,10 @@ class ParticipantesController extends Controller
                                   "fecha_nac"=>$value["fecha_nac"],
                                   "edad"=>$value["edad"],
                                   "genero"=>$value["genero"],
+                                  "sub_genero"=>$value["sub_genero"],
                                   "cap_dife"=>$value["cap_dife"],
                                   "etnia"=>$value["etnia"],
+                                  "sub_etnia"=>$value["sub_etnia"],
                                   "zona"=>$value["zona"],
                                   "departamento_ubi"=>$value["departamento_ubi"],
                                   "municipio"=>$value["municipio"],
@@ -255,8 +262,10 @@ class ParticipantesController extends Controller
                                   "huella_binaria"=>$value["huella_binaria"],
                                   "state"=>$value["state"],
                                   "estado_registro"=>$value["estado_registro"],
+                                  "anio_ingreso_pdp"=>$value["anio_ingreso_pdp"],
+                                  "cargo_poblador"=>$value["cargo_poblador"],
                                   "created_at"=>$value["created_at"],
-                                  "updated_at"=>$value["updated_at"]
+                                  "updated_at"=>$value["updated_at"]           
                                  
 
                                   ]);    
