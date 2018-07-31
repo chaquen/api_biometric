@@ -376,7 +376,8 @@ class ReportesController extends Controller
                                    
                                     foreach($datos->datos->id_evento as $value){
                                         if($fin==$key){
-                                            $sql_eve_doc.="'".$value."')";     
+                                            $sql_eve_doc.="'".$value."')";   
+                                            break;  
                                         }
                                         $sql_eve_doc.="'".$value."',";     
                                     }
@@ -393,6 +394,7 @@ class ReportesController extends Controller
                                     foreach($datos->datos->id_evento as $value){
                                         if($fin==$key){
                                             $sql_eve_nom.="'".$value."')";     
+                                            break;
                                         }
                                         $sql_eve_nom.="'".$value."',";     
                                     }
