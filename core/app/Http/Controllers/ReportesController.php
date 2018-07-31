@@ -370,13 +370,35 @@ class ReportesController extends Controller
                                 //echo $key."<br>";
                                 if($key=="documento"){
                                     $sql.=" documento = '".$value."' AND ";
-                                    $sqldoc.=" documento = '".$value."' AND eventos.id = '".$datos->datos->id_evento."' ";
+                                    $fin =count($datos->datos->id_evento)-1; 
+                                    $sql_eve_doc=" AND eventos.id IN (";
+                                    $sqldoc.=" documento = '".$value."' ";
+                                   
+                                    foreach($datos->datos->id_evento as $value){
+                                        if($fin==$key){
+                                            $sql_eve_doc.="'".$value."')";     
+                                        }
+                                        $sql_eve_doc.="'".$value."',";     
+                                    }
+                                    
+                                    $sqldoc.=$sql_eve_doc;
+                                    
                                     
                                 }
                                 if($key=="pri_nombre"){
                                     $sql.=" pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."' AND " ;
+                                    $fin =count($datos->datos->id_evento)-1; 
+                                    $sql_eve_nom=" AND eventos.id IN (";
+                                    $sqlnom.="(pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."'".") ";    
+                                    foreach($datos->datos->id_evento as $value){
+                                        if($fin==$key){
+                                            $sql_eve_nom.="'".$value."')";     
+                                        }
+                                        $sql_eve_nom.="'".$value."',";     
+                                    }
                                     
-                                    $sqlnom.="(pri_nombre LIKE '".$value."' OR seg_nombre LIKE '".$value."' OR pri_apellido LIKE '".$value."' OR seg_apellido = '".$value."'".") AND eventos.id = '".$datos->datos->id_evento."' ";
+                                    $sqlnom.=$sql_eve_nom;
+                                    
                                 //echo $sql_base_nom.$sql_2 ;   
                                     
                                 }
