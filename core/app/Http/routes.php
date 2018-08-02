@@ -17,16 +17,7 @@ header( 'Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS' );
 
 
 Route::get('/', function () {
-    //return view('welcome');
-
-    //Backup::export();
-    $tz_object = new DateTimeZone('America/Bogota');
-    $hoy=new DateTime();
-    $hoy->setTimezone($tz_object);
-
-    $now=$hoy->format('m\-d\ ');
-    DB::table("participantes")->where("fecha_nac","LIKE","%-".trim($now))->increment("edad",1);
-    
+    return view('welcome');  
    
 });
 Route::get('/index', function () {
