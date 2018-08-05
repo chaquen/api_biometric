@@ -39,6 +39,10 @@ class ExportarController extends Controller
         $arr_zona=[];
         $arr_cargo=[];
         $arr_anio_ing=[];
+        $arr_ver_nac=[];
+        $arr_dep_ubi=[];
+        $arr_ciu_ubi=[];
+        $arr_ver_ubi=[];
         $i=0;
         if($r["respuesta"]!=false){
                 foreach ($r["datos"] as $key => $value) {
@@ -98,20 +102,46 @@ class ExportarController extends Controller
                     
                                         
                 }
-
-               foreach ($r["datos_dep_nac"] as $key => $value) {
+                $i=0;
+                foreach ($r["datos_dep_nac"] as $key => $value) {
                
                     $arr_repo3[$i]=(array)$value;
-                                    $i++;
-            
+                                    $i++;            
                                 
                 }
                 $i=0;
                 foreach ($r["datos_ciu_nac"] as $key => $value) {
                    
                         $arr_repo4[$i]=(array)$value;
-                                        $i++;
-                    
+                                        $i++;            
+                                        
+                }
+                $i=0;
+                foreach ($r["datos_ver_nac"] as $key => $value) {
+                   
+                        $arr_ver_nac[$i]=(array)$value;
+                                        $i++;            
+                                        
+                }
+                $i=0;
+                foreach ($r["datos_dep_ubi"] as $key => $value) {
+               
+                    $arr_dep_ubi[$i]=(array)$value;
+                                    $i++;            
+                                
+                }
+                $i=0;
+                foreach ($r["datos_ciu_ubi"] as $key => $value) {
+                   
+                        $arr_ciu_ubi[$i]=(array)$value;
+                                        $i++;            
+                                        
+                }
+                $i=0;
+                foreach ($r["datos_ver_ubi"] as $key => $value) {
+                   
+                        $arr_ver_ubi[$i]=(array)$value;
+                                        $i++;            
                                         
                 }
                 //var_dump($arr_repo1);
@@ -182,7 +212,7 @@ class ExportarController extends Controller
                                 
                 }
                 
-                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos,$arr_repo_eve,$arr_zona,$arr_anio_ing,$arr_cargo){
+                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos,$arr_repo_eve,$arr_zona,$arr_anio_ing,$arr_cargo,$arr_ver_nac,$arr_dep_ubi,$arr_ciu_ubi,$arr_ver_ubi){
                                 
                                 $excel->sheet('Eventos',function($sheet) use($arr_repo_eve){
                                     $sheet->fromArray($arr_repo_eve);
@@ -203,8 +233,11 @@ class ExportarController extends Controller
                                 $excel->sheet('Departamento de nacimiento',function($sheet) use($arr_repo3){
                                      $sheet->fromArray($arr_repo3);
                                 });  
-                                 $excel->sheet('Ciudad nacimiento',function($sheet) use($arr_repo4){
+                                $excel->sheet('Ciudad nacimiento',function($sheet) use($arr_repo4){
                                      $sheet->fromArray($arr_repo4);
+                                });
+                                $excel->sheet('Vereda nacimiento',function($sheet) use($arr_ver_nac){
+                                     $sheet->fromArray($arr_ver_nac);
                                 });  
                                 $excel->sheet('Capacidades diferentes',function($sheet) use($arr_repo5){
                                      $sheet->fromArray($arr_repo5);
@@ -227,6 +260,15 @@ class ExportarController extends Controller
                                 $excel->sheet('Zonas',function($sheet) use($arr_zona){
                                      $sheet->fromArray($arr_zona);
                                 });
+                                $excel->sheet('Departamento de ubicación',function($sheet) use($arr_dep_ubi){
+                                     $sheet->fromArray($arr_dep_ubi);
+                                });  
+                                $excel->sheet('Ciudad ubicación',function($sheet) use($arr_ciu_ubi){
+                                     $sheet->fromArray($arr_ciu_ubi);
+                                });
+                                $excel->sheet('Vereda ubicación',function($sheet) use($arr_ver_ubi){
+                                     $sheet->fromArray($arr_ver_ubi);
+                                });  
                                 $excel->sheet('Cargo Poblador',function($sheet) use($arr_cargo){
                                      $sheet->fromArray($arr_cargo);
                                 });  
