@@ -108,6 +108,8 @@ class ReportesController extends Controller
 
         $sql_base_escolaridad=trim("
                     SELECT COUNT(escolaridad) AS cuantos_por_escolaridad,participantes.escolaridad FROM participantes WHERE participantes.id IN (");
+        $sql_base_titulo=trim("
+                    SELECT COUNT(titulo_obt) AS cuantos_por_titulo,participantes.titulo_obt FROM participantes WHERE participantes.id IN (");
         $sql_base_cargo=trim("
                     SELECT COUNT(cargo_poblador) AS cuantos_por_cargo,participantes.cargo_poblador FROM participantes WHERE participantes.id IN (");
         $sql_base_ingreso_pdp=trim("
@@ -465,6 +467,7 @@ class ReportesController extends Controller
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.") GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql." AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.") GROUP BY escolaridad"));
+                        $datitulo=DB::select(trim($sql_base_titulo.$sql_base_id.$sql.") GROUP BY titulo_obt"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.") GROUP BY anio_ingreso_pdp"));
 
                         $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.") GROUP BY cargo_poblador"));
@@ -516,7 +519,7 @@ class ReportesController extends Controller
                     }
 
 
-                    
+                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql." AND vereda_ubi <> 'NULL' ) GROUP BY vereda_ubi");
                     
                        
                 break;
@@ -536,6 +539,7 @@ class ReportesController extends Controller
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.")) GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.") AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.")) GROUP BY escolaridad"));
+                        $datitulo=DB::select(trim($sql_base_titulo.$sql_base_id.$sql.")) GROUP BY titulo_obt"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.")) GROUP BY anio_ingreso_pdp"));
                         $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.")) GROUP BY cargo_poblador")); 
                         $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona"));
@@ -610,18 +614,18 @@ class ReportesController extends Controller
                     }
                     
                    
-                     
+                      $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql.") AND vereda_ubi <> 'NULL') GROUP BY vereda_ubi");
 
                 break;
         }
         
         if(count($res)>0){
                return response()->json(array("mensaje"=>"REPORTE ","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,
-                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>true,"sql"=>$ssql
+                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>true,"sql"=>$ssql
                 )); 
 
         }else{
-            return response()->json(array("mensaje"=>"REPORTE  sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>false,"sql"=>trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona")
+            return response()->json(array("mensaje"=>"REPORTE  sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>false,"sql"=>trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona")
                 )); 
         }
             
@@ -661,6 +665,7 @@ class ReportesController extends Controller
             $vereda_nacimiento=DB::table("participantes")
                 ->join("detalle_participantes","detalle_participantes.user_id","=","participantes.documento")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
+                ->where("vereda_nacimiento","<>","NULL")
                 ->select("vereda_nacimiento",DB::RAW("COUNT(vereda_nacimiento) as cuantos_vereda_nacimiento"))
                 ->groupBy("vereda_nacimiento")
                 ->get();                    
@@ -680,6 +685,7 @@ class ReportesController extends Controller
             $vereda_ubi=DB::table("participantes")
                 ->join("detalle_participantes","detalle_participantes.user_id","=","participantes.documento")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
+                ->where("vereda_ubi","<>","NULL")
                 ->select("vereda_ubi",DB::RAW("COUNT(vereda_ubi) as cuantos_por_vereda_ubi"))
                 ->groupBy("vereda_ubi")
                 ->get();           
@@ -733,7 +739,7 @@ class ReportesController extends Controller
              $vereda_nacimiento=DB::table("participantes")
                 ->join("detalle_participantes","detalle_participantes.user_id","=","participantes.documento")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
-                ->where("eventos.id",$id)
+                ->where([["eventos.id",$id],["vereda_nacimiento","<>","NULL"]])
                 ->select("vereda_nacimiento",DB::RAW("COUNT(vereda_nacimiento) as cuantos_vereda_nacimiento"))
                 ->groupBy("vereda_nacimiento")
                 ->get();    
@@ -755,7 +761,7 @@ class ReportesController extends Controller
             $vereda_ubi=DB::table("participantes")
                 ->join("detalle_participantes","detalle_participantes.user_id","=","participantes.documento")
                 ->join("eventos","detalle_participantes.event_id","=","eventos.id")
-                ->where("eventos.id",$id)
+                ->where([["eventos.id",$id],["vereda_ubi","<>","NULL"]])
                 ->select("vereda_ubi",DB::RAW("COUNT(vereda_ubi) as cuantos_por_vereda_ubi"))
                 ->groupBy("vereda_ubi")
                 ->get();     

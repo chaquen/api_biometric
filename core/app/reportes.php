@@ -35,47 +35,49 @@ class reportes extends Model
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
         $sql_base_genero=trim("
-                    SELECT COUNT(genero) AS cuentos_por_genero,participantes.genero FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.genero,COUNT(genero) AS cuentos_por_genero FROM participantes WHERE participantes.id IN (");
         $sql_base_sub_genero=trim("
-                    SELECT COUNT(sub_genero) AS cuentos_por_sub_genero,participantes.sub_genero FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.sub_genero,COUNT(sub_genero) AS cuentos_por_sub_genero FROM participantes WHERE participantes.id IN (");
         $sql_base_edad=trim("
-                    SELECT COUNT(edad) AS cuentos_por_edad,participantes.edad FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.edad,COUNT(edad) AS cuentos_por_edad FROM participantes WHERE participantes.id IN (");
         $sql_base_dep_nacimiento=trim("
-                    SELECT COUNT(dep_nacimiento) AS cuantos_por_dep_nacimiento,participantes.dep_nacimiento FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.dep_nacimiento,COUNT(dep_nacimiento) AS cuantos_por_dep_nacimiento FROM participantes WHERE participantes.id IN (");
         $sql_base_ciud_nacimiento=trim("
-                    SELECT COUNT(ciud_nacimiento) AS cuantos_por_ciud_nacimiento,participantes.ciud_nacimiento FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.ciud_nacimiento,COUNT(ciud_nacimiento) AS cuantos_por_ciud_nacimiento FROM participantes WHERE participantes.id IN (");
         $sql_base_vereda_nacimiento=trim("
-                    SELECT COUNT(vereda_nacimiento) AS cuantos_por_vereda_nacimiento,participantes.vereda_nacimiento FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.vereda_nacimiento,COUNT(vereda_nacimiento) AS cuantos_por_vereda_nacimiento FROM participantes WHERE participantes.id IN (");
 
         $sql_base_dep_ubi=trim("
-                    SELECT COUNT(departamento_ubi) AS cuantos_por_departamento_ubi,participantes.departamento_ubi FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.departamento_ubi,COUNT(departamento_ubi) AS cuantos_por_departamento_ubi FROM participantes WHERE participantes.id IN (");
         $sql_base_ciud_ubi=trim("
-                    SELECT COUNT(municipio) AS cuantos_por_ciud_ubi,participantes.municipio FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.municipio,COUNT(municipio) AS cuantos_por_ciud_ubi FROM participantes WHERE participantes.id IN (");
         $sql_base_vereda_ubi=trim("
-                    SELECT COUNT(vereda_ubi) AS cuantos_por_vereda_ubi,participantes.vereda_ubi FROM participantes WHERE participantes.id IN (");        
+                    SELECT participantes.vereda_ubi,COUNT(vereda_ubi) AS cuantos_por_vereda_ubi FROM participantes WHERE participantes.id IN (");        
         $sql_base_cap_dife=trim("
-                    SELECT COUNT(cap_dife) AS cuantos_por_cap_dife,participantes.cap_dife FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.cap_dife,COUNT(cap_dife) AS cuantos_por_cap_dife FROM participantes WHERE participantes.id IN (");
         $sql_base_etnia=trim("
-                    SELECT COUNT(etnia) AS cuantos_por_etnia,participantes.etnia FROM participantes WHERE participantes.id IN ( ");
+                    SELECT participantes.etnia,COUNT(etnia) AS cuantos_por_etnia FROM participantes WHERE participantes.id IN ( ");
          $sql_base_sub_etnia=trim("
-                    SELECT COUNT(sub_etnia) AS cuantos_por_etnia,participantes.sub_etnia FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.sub_etnia,COUNT(sub_etnia) AS cuantos_por_etnia FROM participantes WHERE participantes.id IN (");
 
         $sql_base_escolaridad=trim("
-                    SELECT COUNT(escolaridad) AS cuantos_por_escolaridad,participantes.escolaridad FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.escolaridad,COUNT(escolaridad) AS cuantos_por_escolaridad FROM participantes WHERE participantes.id IN (");
+        $sql_base_titulo=trim("
+                    SELECT participantes.titulo_obt,COUNT(titulo_obt) AS cuantos_por_titulo FROM participantes WHERE participantes.id IN (");
         $sql_base_cargo=trim("
-                    SELECT COUNT(cargo_poblador) AS cuantos_por_cargo,participantes.cargo_poblador FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.cargo_poblador,COUNT(cargo_poblador) AS cuantos_por_cargo FROM participantes WHERE participantes.id IN (");
         $sql_base_ingreso_pdp=trim("
-                    SELECT COUNT(anio_ingreso_pdp) AS cuantos_por_anio,participantes.anio_ingreso_pdp FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.anio_ingreso_pdp,COUNT(anio_ingreso_pdp) AS cuantos_por_anio FROM participantes WHERE participantes.id IN (");
          $sql_base_zona=trim("
-                    SELECT COUNT(zona) AS cuantos_por_zona,participantes.zona FROM participantes WHERE participantes.id IN (");
+                    SELECT participantes.zona,COUNT(zona) AS cuantos_por_zona FROM participantes WHERE participantes.id IN (");
         $sql_base_linea_organizacion=trim("
-                    SELECT COUNT(lineas.id) AS cuantos_por_organizacion,lineas.nombre_linea as organizacion FROM participantes 
+                    SELECT lineas.nombre_linea as organizacion,COUNT(lineas.id) AS cuantos_por_organizacion FROM participantes 
                     INNER JOIN detalle_procesos ON participantes.documento = detalle_procesos.id_usuario 
                     INNER join proceso ON proceso.id = detalle_procesos.id_proceso
                     INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                     WHERE participantes.id IN (");
         $sql_base_proceso=trim("
-                    SELECT COUNT(proceso.id) AS cuantos_por_proceso,proceso.nombre_proceso as proceso FROM participantes 
+                    SELECT proceso.nombre_proceso as proceso,COUNT(proceso.id) AS cuantos_por_proceso FROM participantes 
                     INNER JOIN detalle_procesos ON participantes.documento = detalle_procesos.id_usuario 
                     INNER join proceso ON proceso.id = detalle_procesos.id_proceso
                     INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
@@ -419,6 +421,7 @@ class reportes extends Model
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.") GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql." AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.") GROUP BY escolaridad"));
+                        $datitulo=DB::select(trim($sql_base_titulo.$sql_base_id.$sql.") GROUP BY titulo_obt"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.") GROUP BY anio_ingreso_pdp"));
 
                         $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.") GROUP BY cargo_poblador"));
@@ -470,7 +473,7 @@ class reportes extends Model
                     }
 
 
-                    
+                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql." AND vereda_ubi <> 'NULL' ) GROUP BY vereda_ubi");
                     
                        
                 break;
@@ -490,6 +493,7 @@ class reportes extends Model
                         $daetnia=DB::select(trim($sql_base_etnia.$sql_base_id.$sql.")) GROUP BY etnia"));
                         $dasubetnia=DB::select(trim($sql_base_sub_etnia.$sql_base_id.$sql.") AND sub_etnia <> 'NULL' ) GROUP BY sub_etnia"));
                         $daescolaridad=DB::select(trim($sql_base_escolaridad.$sql_base_id.$sql.")) GROUP BY escolaridad"));
+                        $datitulo=DB::select(trim($sql_base_titulo.$sql_base_id.$sql.")) GROUP BY titulo_obt"));
                         $daanioingreso=DB::select(trim($sql_base_ingreso_pdp.$sql_base_id.$sql.")) GROUP BY anio_ingreso_pdp"));
                         $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.")) GROUP BY cargo_poblador")); 
                         $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona"));
@@ -563,7 +567,7 @@ class reportes extends Model
                         $danom=DB::select(trim($sql_base_nom.$sqlnom." GROUP BY eventos.id,participantes.id"));        
                     }
                     
-                   
+                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql.") AND vereda_ubi <> 'NULL') GROUP BY vereda_ubi");
                      
 
                 break;
@@ -584,6 +588,7 @@ class reportes extends Model
                             "datos_etnia"=>$daetnia,
                             "datos_sub_etnia"=>$dasubetnia,
                             "datos_escolaridad"=>$daescolaridad,
+                            "datos_titulo_obt"=>$datitulo,
                             "datos_organizacion"=>$daorga,
                             "datos_proceso"=>$daproc,
                             "datos_doc"=>$dadoc,

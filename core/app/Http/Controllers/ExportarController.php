@@ -43,6 +43,7 @@ class ExportarController extends Controller
         $arr_dep_ubi=[];
         $arr_ciu_ubi=[];
         $arr_ver_ubi=[];
+        $arr_titulo=[];
         $i=0;
         if($r["respuesta"]!=false){
                 foreach ($r["datos"] as $key => $value) {
@@ -180,6 +181,15 @@ class ExportarController extends Controller
                     
                                         
                 }
+                $i=0;
+                foreach ($r["datos_titulo_obt"] as $key => $value) {
+                   
+                        $arr_titulo[$i]=(array)$value;
+                                        $i++;
+                    
+                                        
+                }
+                $i=0;
                 foreach ($r["datos_organizacion"] as $key => $value) {
                
                     $arr_repo9[$i]=(array)$value;
@@ -212,7 +222,7 @@ class ExportarController extends Controller
                                 
                 }
                 
-                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos,$arr_repo_eve,$arr_zona,$arr_anio_ing,$arr_cargo,$arr_ver_nac,$arr_dep_ubi,$arr_ciu_ubi,$arr_ver_ubi){
+                 Excel::create($nombre_reporte, function($excel) use($arr_repo,$arr_repo1,$arr_repo2,$arr_repo3,$arr_repo4,$arr_repo5,$arr_repo6,$arr_repo7,$arr_repo8,$arr_repo9,$arr_repo10,$arr_repo11,$arr_repo12,$datos,$arr_repo_eve,$arr_zona,$arr_anio_ing,$arr_cargo,$arr_ver_nac,$arr_dep_ubi,$arr_ciu_ubi,$arr_ver_ubi,$arr_titulo){
                                 
                                 $excel->sheet('Eventos',function($sheet) use($arr_repo_eve){
                                     $sheet->fromArray($arr_repo_eve);
@@ -248,8 +258,11 @@ class ExportarController extends Controller
                                 $excel->sheet('Sub_etnias',function($sheet) use($arr_repo7){
                                      $sheet->fromArray($arr_repo7);
                                 });  
-                                 $excel->sheet('Escolaridad',function($sheet) use($arr_repo8){
+                                $excel->sheet('Escolaridad',function($sheet) use($arr_repo8){
                                      $sheet->fromArray($arr_repo8);
+                                });
+                                $excel->sheet('Título Obtenido',function($sheet) use($arr_titulo){
+                                     $sheet->fromArray($arr_titulo);
                                 });  
                                 $excel->sheet('Organizacion',function($sheet) use($arr_repo9){
                                      $sheet->fromArray($arr_repo9);
