@@ -18,7 +18,7 @@ class reportes extends Model
         $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
 
         $sql_base=trim("
-                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -84,7 +84,7 @@ class reportes extends Model
                     WHERE participantes.id IN (");
                     
         $sql_base_doc=trim("
-                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -92,13 +92,15 @@ class reportes extends Model
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
          $sql_base_nom=trim("
-                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
                         INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
+        $sql_base_acepta_terminos=trim("
+                     SELECT detalle_participantes.acepta_terminos,COUNT(detalle_participantes.user_id) AS cuantos_por_proceso_acepta FROM detalle_participantes WHERE detalle_participantes.user_id IN (");
          $dadoc=array();
          $danom=array();
          $sqlnom=" ";
@@ -182,6 +184,18 @@ class reportes extends Model
                                                 
                                             }
                                         break;
+                                    case 'acepta_terminos':
+                                     $sql.=" acepta_terminos IN (";
+                                            foreach ($value as $k => $v) {
+                                                if($k==count($value)-1){
+                                                    $sql.="'".$v."') AND";
+                                                    break;
+                                                }
+                                                $sql.="'".$v."',";
+                                                
+                                            }
+                                        # code...
+                                        break;     
                                     default:
                                         # code...
                                         break;
@@ -315,7 +329,18 @@ class reportes extends Model
                                                 
                                             }
                                         break;             
-                                    
+                                    case 'acepta_terminos':
+                                     $sql.=" acepta_terminos IN (";
+                                            foreach ($value as $k => $v) {
+                                                if($k==count($value)-1){
+                                                    $sql.="'".$v."') AND";
+                                                    break;
+                                                }
+                                                $sql.="'".$v."',";
+                                                
+                                            }
+                                        # code...
+                                        break; 
                                     default:
                                         # code...
                                         break;
@@ -454,7 +479,7 @@ class reportes extends Model
                         }
 
 
-
+                        $daterminos=DB::select(trim($sql_base_acepta_terminos.$sql_base_id.$sql.") GROUP BY acepta_terminos")); 
                             
 
 
@@ -473,7 +498,7 @@ class reportes extends Model
                     }
 
 
-                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql." AND vereda_ubi <> 'NULL' ) GROUP BY vereda_ubi");
+                    $ssql=trim(trim($sql_base_acepta_terminos.$sql_base_id.$sql.") GROUP BY acepta_terminos"));
                     
                        
                 break;
@@ -566,8 +591,8 @@ class reportes extends Model
                         
                         $danom=DB::select(trim($sql_base_nom.$sqlnom." GROUP BY eventos.id,participantes.id"));        
                     }
-                    
-                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql.") AND vereda_ubi <> 'NULL') GROUP BY vereda_ubi");
+                    $daterminos=DB::select(trim($sql_base_acepta_terminos.$sql_base_id.$sql.")) GROUP BY acepta_terminos"));
+                    $ssql=trim(trim($sql_base_acepta_terminos.$sql_base_id.$sql.")) GROUP BY acepta_terminos"));
                      
 
                 break;
@@ -597,6 +622,7 @@ class reportes extends Model
                             "zonas"=>$dazona,
                             "anio_ingreso_pdp"=>$daanioingreso,
                             "cargo_poblador"=>$dacargo,
+                            "acepta_terminos"=>$daterminos,
                             "sql"=>$ssql.":(",
                             "respuesta"=>true); 
 
