@@ -64,7 +64,7 @@ class ReportesController extends Controller
         $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
 
         $sql_base=trim("
-                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -130,21 +130,25 @@ class ReportesController extends Controller
                     WHERE participantes.id IN (");
                     
         $sql_base_doc=trim("
-                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
                         INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
+         $sql_base_acepta_terminos=trim("
+                     SELECT COUNT(detalle_participantes.user_id) AS cuantos_por_proceso_acepta,detalle_participantes.acepta_terminos FROM detalle_participantes WHERE detalle_participantes.user_id IN (");
          $sql_base_nom=trim("
-                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular FROM participantes 
+            SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
                         INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
-                     WHERE ");
+                     WHERE "
+
+         );
          $dadoc=array();
          $danom=array();
          $sqlnom=" ";
@@ -228,6 +232,17 @@ class ReportesController extends Controller
                                                 
                                             }
                                         break;
+                                    case 'acepta_terminos':
+                                        $sql.=" acepta_terminos IN (";
+                                            foreach ($value as $k => $v) {
+                                                if($k==count($value)-1){
+                                                    $sql.="'".$v."') AND";
+                                                    break;
+                                                }
+                                                $sql.="'".$v."',";
+                                                
+                                            }
+                                        break;    
                                     default:
                                         # code...
                                         break;
@@ -361,7 +376,18 @@ class ReportesController extends Controller
                                                 
                                             }
                                         break;             
-                                    
+                                    case 'acepta_terminos':
+                                     $sql.=" acepta_terminos IN (";
+                                            foreach ($value as $k => $v) {
+                                                if($k==count($value)-1){
+                                                    $sql.="'".$v."') AND";
+                                                    break;
+                                                }
+                                                $sql.="'".$v."',";
+                                                
+                                            }
+                                        # code...
+                                        break; 
                                     default:
                                         # code...
                                         break;
@@ -472,7 +498,8 @@ class ReportesController extends Controller
 
                         $dacargo=DB::select(trim($sql_base_cargo.$sql_base_id.$sql.") GROUP BY cargo_poblador"));
                         $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.") GROUP BY zona"));
-                        
+
+                       $daterminos=DB::select(trim($sql_base_acepta_terminos.$sql_base_id.$sql.") GROUP BY acepta_terminos"));                        
 
                         if($sql_org!=" "){
 
@@ -519,7 +546,7 @@ class ReportesController extends Controller
                     }
 
 
-                    $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql." AND vereda_ubi <> 'NULL' ) GROUP BY vereda_ubi");
+                    $ssql=trim($sql_base_acepta_terminos.$sql_base_id.$sql.") GROUP BY acepta_terminos");                        
                     
                        
                 break;
@@ -545,7 +572,7 @@ class ReportesController extends Controller
                         $dazona=DB::select(trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona"));
                         //$daorga=DB::select(trim($sql_base_linea_organizacion.$sql_base_id.$sql.")) ".$sql_org." GROUP BY lineas.id"));
                         //$daproc=DB::select(trim($sql_base_proceso.$sql_base_id.$sql.")) ".$sql_pro." GROUP BY proceso.id")); 
-
+                        $daterminos=DB::select(trim($sql_base_acepta_terminos.$sql_base_id.$sql.")) GROUP BY acepta_terminos"));                        
 
 
                         if($sql_org!=" "){
@@ -614,18 +641,18 @@ class ReportesController extends Controller
                     }
                     
                    
-                      $ssql=trim($sql_base_vereda_ubi.$sql_base_id.$sql.") AND vereda_ubi <> 'NULL') GROUP BY vereda_ubi");
+                      $ssql=trim($sql_base_acepta_terminos.$sql_base_id.$sql.")) GROUP BY acepta_terminos");   
 
                 break;
         }
         
         if(count($res)>0){
                return response()->json(array("mensaje"=>"REPORTE ","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,
-                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>true,"sql"=>$ssql
+                    "datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"terminos"=>$daterminos,"respuesta"=>true,"sql"=>$ssql
                 )); 
 
         }else{
-            return response()->json(array("mensaje"=>"REPORTE  sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"respuesta"=>false,"sql"=>trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona")
+            return response()->json(array("mensaje"=>"REPORTE  sin datos que mostrar","datos"=>$res,"datos_genero"=>$dagen,"datos_sub_genero"=>$dasubgen,"datos_edaddes"=>$daedad,"datos_dep_nac"=>$dadepnac,"datos_ciu_nac"=>$daciunac,"datos_ver_nac"=>$davernac,"datos_dep_ubi"=>$dadepubi,"datos_ciu_ubi"=>$daciuubi,"datos_ver_ubi"=>$daverubi,"datos_cap_dife"=>$dacapdif,"datos_etnia"=>$daetnia,"datos_sub_etnia"=>$dasubetnia,"datos_escolaridad"=>$daescolaridad,"titulo_obt"=>$datitulo,"datos_organizacion"=>$daorga,"datos_proceso"=>$daproc,"documento"=>$dadoc,"nombre"=>$danom,"eventos"=>$datbleventos,"anio_ingreso_pdp"=>$daanioingreso,"cargo"=>$dacargo,"zona"=>$dazona,"terminos"=>$daterminos,"respuesta"=>false,"sql"=>trim($sql_base_zona.$sql_base_id.$sql.")) GROUP BY zona")
                 )); 
         }
             
