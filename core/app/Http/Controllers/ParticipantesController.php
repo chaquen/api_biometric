@@ -310,7 +310,11 @@ class ParticipantesController extends Controller
                           
 
                           DB::table("detalle_participantes")
-                          ->insert(["user_id"=>$value["user_id"],"event_id"=>$value["event_id"],"created_at"=>$value["created_at"],"updated_at"=>$value["updated_at"]]);
+                          ->insert(["user_id"=>$value["user_id"],
+                                    "event_id"=>$value["event_id"],
+                                    "created_at"=>$value["created_at"],
+                                    "updated_at"=>$value["updated_at"],
+                                    "acepta_terminos"=>$value["acepta_terminos]);
                       }else{
                         DB::table("detalle_participantes")
                         ->where( [[
