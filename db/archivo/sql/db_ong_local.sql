@@ -1,3 +1,4 @@
+-- version 4.8.1
 -- phpMyAdmin SQL Dump
 -- version 4.8.1
 -- https://www.phpmyadmin.net/
@@ -64,9 +65,9 @@ CREATE TABLE `eventos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   CONSTRAINT `fk_ref_evento`
-		FOREIGN KEY (id_ref) REFERENCES users (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
+    FOREIGN KEY (id_ref) REFERENCES users (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -95,9 +96,9 @@ CREATE TABLE `proceso` (
   `fk_id_linea` int(10) UNSIGNED NOT NULL,
   `nombre_proceso` varchar(256) NOT NULL,
   CONSTRAINT `fk_ref_linea`
-		FOREIGN KEY (fk_id_linea) REFERENCES lineas (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
+    FOREIGN KEY (fk_id_linea) REFERENCES lineas (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -110,7 +111,7 @@ CREATE TABLE `proceso` (
 CREATE TABLE `participantes` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `tipo_doc` varchar(255) DEFAULT NULL,
-  `documento` int(11) UNSIGNED DEFAULT NULL,
+  `documento` bigint(255) UNSIGNED DEFAULT NULL,
   `lugar_exp` varchar(255) DEFAULT NULL,
   `pri_apellido` varchar(255) DEFAULT NULL,
   `seg_apellido` varchar(255) DEFAULT NULL,
@@ -158,18 +159,18 @@ CREATE TABLE `participantes` (
 
 CREATE TABLE `detalle_procesos` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `id_usuario` int(11) UNSIGNED DEFAULT NULL,
+  `id_usuario` bigint(255) UNSIGNED DEFAULT NULL,
   `id_proceso` int(11) UNSIGNED DEFAULT NULL,
   `created_at` datetime NOT NULL,
    CONSTRAINT `fk_id_usuario`
-		FOREIGN KEY (id_usuario) REFERENCES participantes (documento)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	CONSTRAINT `fk_id_dt_proceso`
-		FOREIGN KEY (id_proceso) REFERENCES proceso (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
-		
+    FOREIGN KEY (id_usuario) REFERENCES participantes (documento)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_id_dt_proceso`
+    FOREIGN KEY (id_proceso) REFERENCES proceso (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -179,18 +180,18 @@ CREATE TABLE `detalle_procesos` (
 
 CREATE TABLE `detalle_participantes` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `user_id` int(10) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(255) UNSIGNED DEFAULT NULL,
   `event_id` int(10) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
     CONSTRAINT `fk_user_id`
-		FOREIGN KEY (user_id) REFERENCES participantes (documento)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	CONSTRAINT `fk_event_id`
-		FOREIGN KEY (event_id) REFERENCES eventos (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE    
+    FOREIGN KEY (user_id) REFERENCES participantes (documento)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_event_id`
+    FOREIGN KEY (event_id) REFERENCES eventos (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE    
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -204,8 +205,7 @@ CREATE TABLE `sincronizaciones` (
   `usuario` int(11) UNSIGNED NOT NULL,
   `tipo` enum('preparacion','sincronizacion') NOT NULL,
    CONSTRAINT `fk_user_id_syn`
-		FOREIGN KEY (usuario) REFERENCES users (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
+    FOREIGN KEY (usuario) REFERENCES users (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-	
