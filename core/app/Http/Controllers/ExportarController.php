@@ -44,6 +44,7 @@ class ExportarController extends Controller
         $arr_ciu_ubi=[];
         $arr_ver_ubi=[];
         $arr_titulo=[];
+        $arr_terminos=[];
         $i=0;
         if($r["respuesta"]!=false){
                 foreach ($r["datos"] as $key => $value) {
@@ -154,7 +155,7 @@ class ExportarController extends Controller
                     
                                         
                 }
-
+                $i=0;
                 foreach ($r["datos_etnia"] as $key => $value) {
                
                     $arr_repo6[$i]=(array)$value;
@@ -214,10 +215,19 @@ class ExportarController extends Controller
                     
                                         
                 }
+                $i=0;
                 foreach ($r["datos_nom"] as $key => $value) {
                     //var_dump($value);
                     $arr_repo12[$i]=(array)$value;
                                     $i++;
+            
+                                
+                }
+                $i=0;
+                foreach ($r["zonas"] as $key => $value) {
+               
+                    $arr_zona[$i]=(array)$value;
+                                $i++;
             
                                 
                 }
@@ -285,6 +295,9 @@ class ExportarController extends Controller
                                 $excel->sheet('Cargo Poblador',function($sheet) use($arr_cargo){
                                      $sheet->fromArray($arr_cargo);
                                 });  
+                                 $excel->sheet('Terminos',function($sheet) use($arr_terminos){
+                                     $sheet->fromArray($arr_terminos);
+                                });
                                 $excel->sheet('Documento',function($sheet) use($arr_repo11){
                                      $sheet->fromArray($arr_repo11);
                                 });  
