@@ -224,9 +224,10 @@ class ExportarController extends Controller
                                 
                 }
                 $i=0;
-                foreach ($r["zonas"] as $key => $value) {
+                //var_dump($r["acepta_terminos"] );
+                foreach ($r["acepta_terminos"] as $key => $value) {
                
-                    $arr_zona[$i]=(array)$value;
+                    $arr_terminos[$i]=(array)$value;
                                 $i++;
             
                                 
@@ -295,9 +296,9 @@ class ExportarController extends Controller
                                 $excel->sheet('Cargo Poblador',function($sheet) use($arr_cargo){
                                      $sheet->fromArray($arr_cargo);
                                 });  
-                                 $excel->sheet('Terminos',function($sheet) use($arr_terminos){
+                                /*$excel->sheet('Terminos',function($sheet) use($arr_terminos){
                                      $sheet->fromArray($arr_terminos);
-                                });
+                                });*/
                                 $excel->sheet('Documento',function($sheet) use($arr_repo11){
                                      $sheet->fromArray($arr_repo11);
                                 });  

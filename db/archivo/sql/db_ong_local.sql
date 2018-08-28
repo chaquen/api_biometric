@@ -182,9 +182,10 @@ CREATE TABLE `detalle_participantes` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` bigint(255) UNSIGNED DEFAULT NULL,
   `event_id` int(10) UNSIGNED NOT NULL,
+  `acepta_terminos` enum('SI','NO') NOT NULL DEFAULT 'NO',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-    CONSTRAINT `fk_user_id`
+  CONSTRAINT `fk_user_id`
     FOREIGN KEY (user_id) REFERENCES participantes (documento)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
