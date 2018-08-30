@@ -32,6 +32,8 @@ CREATE TABLE `detalle_participantes` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` bigint(255) UNSIGNED NOT NULL,
   `event_id` int(10) UNSIGNED NOT NULL,
+  `acepta_terminos` enum('SI','NO') NOT NULL DEFAULT 'NO',
+  `acepta_terminos_foto` enum('SI','NO') NOT NULL DEFAULT 'NO',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

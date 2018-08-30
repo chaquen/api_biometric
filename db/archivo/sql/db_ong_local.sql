@@ -183,6 +183,7 @@ CREATE TABLE `detalle_participantes` (
   `user_id` bigint(255) UNSIGNED DEFAULT NULL,
   `event_id` int(10) UNSIGNED NOT NULL,
   `acepta_terminos` enum('SI','NO') NOT NULL DEFAULT 'NO',
+  `acepta_terminos_foto` enum('SI','NO') NOT NULL DEFAULT 'NO',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   CONSTRAINT `fk_user_id`

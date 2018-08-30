@@ -133,7 +133,8 @@ class UsuariosController extends Controller
         $datos=Util::decodificar_json($request->get("datos"));
         //var_dump($datos);	
         $client = new Client();
-        
+        //190.3.194.207
+        //pdpmagdalenacentro.org
         $response = $client->request('POST', 'http://pdpmagdalenacentro.org/api/user/',[
                 'form_params' => [
                     'token' => 'jGffO7RLMaPnqZAt4zU7EUBj7w2qR5VVJHI7MLOZhv8p7z6sjP6baHk/7oKI2rSn1svXB5uQnPuzmrkDFJPDxQ==',

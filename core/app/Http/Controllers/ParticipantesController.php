@@ -166,7 +166,7 @@ class ParticipantesController extends Controller
     }
 
     public function sincronizar(Request $request){
-        //  var_dump($request->get("datos"));
+        //var_dump($request->get("datos"));
         $participantes=$request->get("participantes");
         $detalle_participantes=$request->get("detalle_participantes");
         $procesos=$request->get("procesos");
@@ -314,7 +314,7 @@ class ParticipantesController extends Controller
                                     "event_id"=>$value["event_id"],
                                     "created_at"=>$value["created_at"],
                                     "updated_at"=>$value["updated_at"],
-                                    "acepta_terminos"=>$value["acepta_terminos]);
+                                  ]);
                       }else{
                         DB::table("detalle_participantes")
                         ->where( [[
