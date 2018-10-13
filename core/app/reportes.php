@@ -14,11 +14,44 @@ class reportes extends Model
 
 
         $ssql="";
-        $sql_base_tbl_eventos_G=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id ");
-        $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE ");
+        
+        $datos_filtro="participantes.id,";  
+        $datos_filtro_doc="eventos.id,eventos.name,";  
+        $datos_filtro_nom="eventos.id,eventos.name,";  
+        //var_dump($datos->datos->datos->datos_filtro[0]);
+        
+        if($datos->datos->datos->datos_filtro[0]=="todos_los_datos"){
+           $datos_filtro="participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.vereda_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,participantes.email,participantes.titulo_obt,participantes.cargo_poblador,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";  
+
+            $datos_filtro_doc="eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.municipio,participantes.vereda_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,participantes.email,participantes.titulo_obt,participantes.cargo_poblador,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";  
+
+            $datos_filtro_nom="eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.vereda_ubi,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,participantes.email,participantes.titulo_obt,participantes.cargo_poblador,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";  
+
+        }else{
+            $c=count($datos->datos->datos->datos_filtro)-1;
+
+            foreach ($datos->datos->datos->datos_filtro as $key => $value) {
+                
+                if($value!="" && $key < $c){
+                    
+                    $datos_filtro.=$value.",";
+                    $datos_filtro_doc.=$value.",";
+                    $datos_filtro_nom.=$value.",";
+                }elseif ($c == $key) {
+                    $datos_filtro.=$value.",detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";
+                    $datos_filtro_doc.=$value.",detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";
+                    $datos_filtro_nom.=$value.",detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto";
+                    break;
+                }
+            }
+
+
+            
+
+        } 
 
         $sql_base=trim("
-                    SELECT participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido  ,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,participantes.etnia,participantes.cap_dife,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto FROM participantes 
+                    SELECT ".$datos_filtro." FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
                         INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
                         INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
@@ -26,6 +59,23 @@ class reportes extends Model
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
 
                      WHERE ");
+        $sql_base_doc=trim("
+                    SELECT ".$datos_filtro_doc." FROM participantes 
+                        INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
+                        INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
+                        INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
+                        INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
+                        INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
+                     WHERE ");
+         $sql_base_nom=trim("
+                    SELECT ".$datos_filtro_nom." FROM participantes 
+                        INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
+                        INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
+                        INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
+                        INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
+                        INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
+                     WHERE ");
+
         $sql_base_id=trim("
                     SELECT participantes.id FROM participantes 
                         INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
@@ -34,6 +84,8 @@ class reportes extends Model
                         INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                         INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
                      WHERE ");
+        $sql_base_tbl_eventos_G=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id ");
+        $sql_base_tbl_eventos=trim("SELECT eventos.name,eventos.date,COUNT(eventos.id) as cuantos_por_eventos,city FROM `detalle_participantes` INNER join eventos on eventos.id=detalle_participantes.event_id WHERE "); 
         $sql_base_genero=trim("
                     SELECT participantes.genero,COUNT(genero) AS cuentos_por_genero FROM participantes WHERE participantes.id IN (");
         $sql_base_sub_genero=trim("
@@ -82,23 +134,6 @@ class reportes extends Model
                     INNER join proceso ON proceso.id = detalle_procesos.id_proceso
                     INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
                     WHERE participantes.id IN (");
-                    
-        $sql_base_doc=trim("
-                    SELECT eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto FROM participantes 
-                        INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
-                        INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
-                        INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
-                        INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
-                        INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
-                     WHERE ");
-         $sql_base_nom=trim("
-                    SELECT eventos.id,eventos.name,participantes.id,participantes.id,participantes.tipo_doc,participantes.documento,participantes.pri_nombre,participantes.seg_nombre,participantes.pri_apellido,participantes.seg_apellido,participantes.edad,participantes.genero,participantes.escolaridad,participantes.zona,participantes.dep_nacimiento,participantes.ciud_nacimiento,participantes.municipio,detalle_participantes.updated_at,participantes.cap_dife,participantes.etnia,participantes.departamento_ubi,participantes.edad,participantes.anio_ingreso_pdp,participantes.celular,detalle_participantes.acepta_terminos,detalle_participantes.acepta_terminos_foto FROM participantes 
-                        INNER JOIN detalle_participantes ON detalle_participantes.user_id = participantes.documento 
-                        INNER JOIN detalle_procesos ON detalle_procesos.id_usuario = participantes.documento
-                        INNER JOIN proceso ON proceso.id = detalle_procesos.id_proceso
-                        INNER JOIN lineas ON lineas.id = proceso.fk_id_linea
-                        INNER JOIN eventos ON detalle_participantes.event_id = eventos.id
-                     WHERE ");
         $sql_base_acepta_terminos=trim("
                      SELECT detalle_participantes.acepta_terminos,COUNT(detalle_participantes.user_id) AS cuantos_por_proceso_acepta FROM detalle_participantes WHERE detalle_participantes.user_id IN (");
          $dadoc=array();

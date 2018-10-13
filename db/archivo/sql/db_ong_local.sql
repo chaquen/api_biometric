@@ -211,3 +211,24 @@ CREATE TABLE `sincronizaciones` (
     ON DELETE CASCADE
     ON UPDATE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `detalle_registro`
+--
+CREATE TABLE `detalle_registro` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `id_usuario` int(11) UNSIGNED NOT NULL,
+  `id_participantes` int(11) UNSIGNED NOT NULL,
+  `fecha` datetime NOT NULL,
+  `tipo` enum('registro','actualizacion',"asistencia") NOT NULL,
+   CONSTRAINT `fk_user_id`
+    FOREIGN KEY (id_usuario) REFERENCES users (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    CONSTRAINT `fk_participante_id`
+    FOREIGN KEY (id_participantes) REFERENCES users (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE 
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

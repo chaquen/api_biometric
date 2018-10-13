@@ -1,3 +1,0 @@
- SELECT TIMESTAMPDIFF(YEAR, fecha_nac, CURDATE()) AS edad,
-   COUNT(*)
-   FROM participantes GROUP BY fecha_nac;
